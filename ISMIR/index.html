@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Information-Theoretic Measures of Music Listening – Daniel Boland – Data Scientist</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Having scraped a lot of playlists and listening histories from last.fm, I was keen to see which music features were associated with the way users made playlists, or how their listening changed over time. This user-centred approach to feature selection and system evaluation was published at ISMIR 2014. Some example code and interactive demos follow. Read the paper.
+" />
+    <meta property="og:description" content="Having scraped a lot of playlists and listening histories from last.fm, I was keen to see which music features were associated with the way users made playlists, or how their listening changed over time. This user-centred approach to feature selection and system evaluation was published at ISMIR 2014. Some example code and interactive demos follow. Read the paper.
+" />
+    
+    <meta name="author" content="Daniel Boland" />
+
+    
+    <meta property="og:title" content="Information-Theoretic Measures of Music Listening" />
+    <meta property="twitter:title" content="Information-Theoretic Measures of Music Listening" />
+    
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <link rel="stylesheet" href="/css/syntax.css" />
+    <link rel="alternate" type="application/rss+xml" title="Daniel Boland - Data Scientist" href="/feed.xml" />
+
+    <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="/" class="site-avatar"><img src="http://avatars3.githubusercontent.com/u/2472196?v=3&u=f2b82329f29feaaa00ed76813a50853f75004e7b&s=230" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="/">Daniel Boland</a></h1>
+            <p class="site-description">Data Scientist</p>
+          </div>
+
+          <nav>
+            <a href="/">Blog</a>
+            <a href="/publications">Publications</a>
+            <a href="/about">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+      <article class="post">
+  <h1>Information-Theoretic Measures of Music Listening</h1>
+  October 27, 2014
+
+  <div class="entry">
+    <p>Having scraped a lot of playlists and listening histories from last.fm, I was keen to see which music features were associated with the way users made playlists, or how their listening changed over time. This user-centred approach to feature selection and system evaluation was published at ISMIR 2014. Some example code and interactive demos follow. <a href="http://www.dcs.gla.ac.uk/%7Erod/publications/BolMur14.pdf">Read the paper</a>.</p>
+
+<hr>
+
+<h2>Analysing User Listening History</h2>
+
+<p>This example shows a user&#39;s listening behaviour over several years. The entropy over features is computed for a moving window of track plays, indicating how diverse the listening was over each feature. Taking artist IDs as example, throughout 2007-2010, the entropy is often low, with some sessions of just one artist. In February 2010, the user began using online radio, listening to tracks irrespective of artist, causing a distinct change in entropy. Note that they still sometimes continued their old style of music retrieval as well.</p>
+
+<iframe width="100%" height="510px" frameborder="0" src="https://dannyboland.shinyapps.io/listeningHistory/"><!-- //required for browser compatibility --></iframe>
+
+<h3>Example code</h3>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="kn">library</span><span class="p">(</span>RSQLite<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>infotheo<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>reshape<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>changepoint<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>zoo<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>RColorBrewer<span class="p">)</span>
+
+<span class="c1"># Query the dataset</span>
+con <span class="o">&lt;-</span> dbConnect<span class="p">(</span>SQLite<span class="p">(),</span> <span class="s">&quot;spud.sqlite&quot;</span><span class="p">)</span>
+history <span class="o">&lt;-</span> dbGetQuery<span class="p">(</span>con<span class="p">,</span> <span class="s">&quot;SELECT tl.date, t.* FROM lastfmtracklistens as tl JOIN tracks as t ON tl.track=t.trackid WHERE tl.user=2275;&quot;</span><span class="p">)</span>
+
+<span class="c1"># Sort listens by date </span>
+history <span class="o">&lt;-</span> history<span class="p">[</span><span class="kp">with</span><span class="p">(</span>history<span class="p">,</span> <span class="kp">order</span><span class="p">(</span><span class="kp">date</span><span class="p">)),]</span>
+
+<span class="c1"># We need discrete features for entropy functions</span>
+history<span class="p">[,</span><span class="s">&#39;popularity&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> discretize<span class="p">(</span>history<span class="p">[,</span><span class="s">&#39;popularity&#39;</span><span class="p">],</span>nbins<span class="o">=</span><span class="m">25</span><span class="p">)</span>
+history<span class="p">[,</span><span class="s">&#39;duration&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> discretize<span class="p">(</span>history<span class="p">[,</span><span class="s">&#39;duration&#39;</span><span class="p">],</span>nbins<span class="o">=</span><span class="m">25</span><span class="p">)</span>
+
+<span class="c1"># Select a feature</span>
+f <span class="o">&lt;-</span> zoo<span class="p">(</span>history<span class="o">$</span>artist<span class="p">)</span>
+time<span class="p">(</span>f<span class="p">)</span> <span class="o">&lt;-</span> <span class="kp">as.POSIXlt</span><span class="p">(</span>history<span class="o">$</span><span class="kp">date</span><span class="p">)</span>
+
+<span class="c1"># Calculate the windowed entropy</span>
+H <span class="o">&lt;-</span> rollapply<span class="p">(</span>f<span class="p">,</span> <span class="m">20</span><span class="p">,</span> entropy<span class="p">,</span> by<span class="o">=</span><span class="m">20</span><span class="p">,</span> partial<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+Hdf <span class="o">&lt;-</span> fortify<span class="p">(</span>H<span class="p">)</span>
+
+<span class="c1"># Find a changepoint</span>
+cp <span class="o">&lt;-</span> Hdf<span class="p">[</span><span class="kp">attributes</span><span class="p">(</span>cpt.meanvar<span class="p">(</span>Hdf<span class="o">$</span>H<span class="p">))</span><span class="o">$</span>cpts<span class="p">[</span><span class="m">1</span><span class="p">],]</span><span class="o">$</span>Index
+Hdf<span class="o">$</span>aftercp <span class="o">&lt;-</span> Hdf<span class="o">$</span>Index <span class="o">&gt;</span> cp
+historyPlot <span class="o">&lt;-</span> ggplot<span class="p">(</span>data<span class="o">=</span>Hdf<span class="p">,</span> aes<span class="p">(</span>x<span class="o">=</span>Index<span class="p">,</span> y<span class="o">=</span>H<span class="p">))</span> <span class="o">+</span> geom_point<span class="p">(</span>alpha<span class="o">=</span><span class="m">0.7</span><span class="p">,</span> aes<span class="p">(</span>colour<span class="o">=</span>aftercp<span class="p">))</span> <span class="o">+</span> <span class="kc">...</span></code></pre></div>
+
+<hr>
+
+<h2>Playlist-based Feature Selection</h2>
+
+<p>This example shows how to identify music features relevant to how users made the 10,000 playlists in the dataset. We retrieved music features for each song and calculate the Mutual-Information of music features with playlist membership.</p>
+
+<p><br>
+<div align="center"><img src='http://dannyboland.com/spud/featuresPlot.png' width="70%"></div></p>
+
+<h3>Example code</h3>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="kn">library</span><span class="p">(</span>infotheo<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>RSQLite<span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>ggplot2<span class="p">)</span>
+
+<span class="c1"># Calculate Adapted Mutual Information</span>
+<span class="c1"># We normalise against feature entropy only, and not class (playlist)</span>
+<span class="c1"># Refer to the paper for more details</span>
+getAMI <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>feature<span class="p">,</span> <span class="kp">class</span><span class="p">)</span> <span class="p">{</span>
+  I <span class="o">&lt;-</span> mutinformation<span class="p">(</span><span class="kp">class</span><span class="p">,</span> feature<span class="p">)</span>
+  n0 <span class="o">&lt;-</span> mutinformation<span class="p">(</span><span class="kp">class</span><span class="p">[</span><span class="kp">sample.int</span><span class="p">(</span><span class="kp">length</span><span class="p">(</span><span class="kp">class</span><span class="p">))],</span> feature<span class="p">)</span>
+  <span class="c1">#return((I - n0) / (max(entropy(class), entropy(feature)) - n0))</span>
+  <span class="kr">return</span><span class="p">((</span>I <span class="o">-</span> n0<span class="p">)</span> <span class="o">/</span> <span class="p">(</span>entropy<span class="p">(</span>feature<span class="p">)</span> <span class="o">-</span> n0<span class="p">))</span>
+<span class="p">}</span>
+
+<span class="c1"># Query the dataset</span>
+con <span class="o">&lt;-</span> dbConnect<span class="p">(</span>SQLite<span class="p">(),</span> <span class="s">&quot;spud.sqlite&quot;</span><span class="p">)</span>
+<span class="c1"># Our entropy view joins playlists with music features</span>
+<span class="c1"># These are propriertary and not currently included in the SPUD dataset</span>
+data <span class="o">&lt;-</span> dbGetQuery<span class="p">(</span>con<span class="p">,</span> <span class="s">&quot;SELECT * FROM [Entropy];&quot;</span><span class="p">)</span>
+
+<span class="c1"># Select the features we&#39;re interested in</span>
+features <span class="o">&lt;-</span> data<span class="p">[,</span><span class="m">6</span><span class="o">:</span><span class="p">(</span><span class="kp">ncol</span><span class="p">(</span>data<span class="p">)</span><span class="m">-4</span><span class="p">)]</span>
+class <span class="o">&lt;-</span> data<span class="o">$</span>playlist
+
+<span class="c1"># Calculate AMI between features and class</span>
+fami <span class="o">&lt;-</span> <span class="kp">apply</span><span class="p">(</span>features<span class="p">,</span><span class="m">2</span><span class="p">,</span>getAMI<span class="p">,</span><span class="kp">class</span><span class="p">)</span></code></pre></div>
+
+<hr>
+
+<h2>Dataset</h2>
+
+<p>The SPUD dataset contains 10,000 playlists created by Last.fm users. Spotify URI and song metadata are included for every song. Full listening history is also included for a number of users. The dataset is in SQLite database format and is available under the MIT open source license:</p>
+
+<p><a href="http://www.dcs.gla.ac.uk/%7Edaniel/spud/SPUD.sqlite">Download dataset</a>  </p>
+
+  </div>
+
+  <div class="date">
+    Written on October 27, 2014
+  </div>
+
+  
+<div class="comments">
+	<div id="disqus_thread"></div>
+	<script type="text/javascript">
+
+	    var disqus_shortname = 'dannyboland';
+
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+<a href="mailto:email@dannyboland.com"><i class="svg-icon email"></i></a>
+
+
+<a href="http://github.com/DCBoland/"><i class="svg-icon github"></i></a>
+
+<a href="http://linkedin.com/in/dannyboland"><i class="svg-icon linkedin"></i></a>
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+	<!-- Google Analytics -->
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-44958467-1', 'auto');
+		ga('send', 'pageview', {
+		  'page': '/ISMIR/',
+		  'title': 'Information-Theoretic Measures of Music Listening'
+		});
+	</script>
+	<!-- End Google Analytics -->
+
+
+  </body>
+</html>

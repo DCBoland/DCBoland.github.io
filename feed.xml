@@ -7,16 +7,100 @@
     <atom:link href="http://www.dannyboland.com/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
-        <title>You're up and running!</title>
-        <description>&lt;p&gt;Next you can update your site name, avatar and other options using the _config.yml file in the root of your repository (shown below).&lt;/p&gt;
+        <title>Information-Theoretic Measures of Music Listening</title>
+        <description>&lt;p&gt;Having scraped a lot of playlists and listening histories from last.fm, I was keen to see which music features were associated with the way users made playlists, or how their listening changed over time. This user-centred approach to feature selection and system evaluation was published at ISMIR 2014. Some example code and interactive demos follow. &lt;a href=&quot;http://www.dcs.gla.ac.uk/%7Erod/publications/BolMur14.pdf&quot;&gt;Read the paper&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/config.png&quot; alt=&quot;_config.yml&quot;&gt;&lt;/p&gt;
+&lt;hr&gt;
 
-&lt;p&gt;The easiest way to make your first post is to edit this one. Go into /_posts/ and update the Hello World markdown file. For more instructions head over to the &lt;a href=&quot;https://github.com/barryclark/jekyll-now&quot;&gt;Jekyll Now repository&lt;/a&gt; on GitHub.&lt;/p&gt;
+&lt;h2&gt;Analysing User Listening History&lt;/h2&gt;
+
+&lt;p&gt;This example shows a user&amp;#39;s listening behaviour over several years. The entropy over features is computed for a moving window of track plays, indicating how diverse the listening was over each feature. Taking artist IDs as example, throughout 2007-2010, the entropy is often low, with some sessions of just one artist. In February 2010, the user began using online radio, listening to tracks irrespective of artist, causing a distinct change in entropy. Note that they still sometimes continued their old style of music retrieval as well.&lt;/p&gt;
+
+&lt;iframe width=&quot;100%&quot; height=&quot;510px&quot; frameborder=&quot;0&quot; src=&quot;https://dannyboland.shinyapps.io/listeningHistory/&quot;&gt;&lt;!-- //required for browser compatibility --&gt;&lt;/iframe&gt;
+
+&lt;h3&gt;Example code&lt;/h3&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;RSQLite&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;infotheo&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;reshape&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;ggplot2&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;changepoint&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;zoo&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;RColorBrewer&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Query the dataset&lt;/span&gt;
+con &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; dbConnect&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;SQLite&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;spud.sqlite&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+history &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; dbGetQuery&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;con&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;SELECT tl.date, t.* FROM lastfmtracklistens as tl JOIN tracks as t ON tl.track=t.trackid WHERE tl.user=2275;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Sort listens by date &lt;/span&gt;
+history &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; history&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;history&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;order&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),]&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# We need discrete features for entropy functions&lt;/span&gt;
+history&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;popularity&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; discretize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;history&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;popularity&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;nbins&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+history&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;duration&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; discretize&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;history&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;duration&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;nbins&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Select a feature&lt;/span&gt;
+f &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; zoo&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;history&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;artist&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+time&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;as.POSIXlt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;history&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Calculate the windowed entropy&lt;/span&gt;
+H &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; rollapply&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; entropy&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; by&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; partial&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+Hdf &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; fortify&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;H&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Find a changepoint&lt;/span&gt;
+cp &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; Hdf&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;cpt.meanvar&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;Hdf&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;H&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;cpts&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Index
+Hdf&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;aftercp &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; Hdf&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;Index &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; cp
+historyPlot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Hdf&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;x&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Index&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; y&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;H&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; geom_point&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;alpha&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0.7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; aes&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;colour&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;aftercp&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;hr&gt;
+
+&lt;h2&gt;Playlist-based Feature Selection&lt;/h2&gt;
+
+&lt;p&gt;This example shows how to identify music features relevant to how users made the 10,000 playlists in the dataset. We retrieved music features for each song and calculate the Mutual-Information of music features with playlist membership.&lt;/p&gt;
+
+&lt;p&gt;&lt;br&gt;
+&lt;div align=&quot;center&quot;&gt;&lt;img src=&#39;http://dannyboland.com/spud/featuresPlot.png&#39; width=&quot;70%&quot;&gt;&lt;/div&gt;&lt;/p&gt;
+
+&lt;h3&gt;Example code&lt;/h3&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;infotheo&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;RSQLite&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;ggplot2&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Calculate Adapted Mutual Information&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# We normalise against feature entropy only, and not class (playlist)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# Refer to the paper for more details&lt;/span&gt;
+getAMI &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;feature&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  I &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; mutinformation&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; feature&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  n0 &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; mutinformation&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;sample.int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))],&lt;/span&gt; feature&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;#return((I - n0) / (max(entropy(class), entropy(feature)) - n0))&lt;/span&gt;
+  &lt;span class=&quot;kr&quot;&gt;return&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;I &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; n0&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;entropy&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;feature&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; n0&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Query the dataset&lt;/span&gt;
+con &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; dbConnect&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;SQLite&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;spud.sqlite&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# Our entropy view joins playlists with music features&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# These are propriertary and not currently included in the SPUD dataset&lt;/span&gt;
+data &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; dbGetQuery&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;con&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;SELECT * FROM [Entropy];&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Select the features we&amp;#39;re interested in&lt;/span&gt;
+features &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; data&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;ncol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;data&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;-4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+class &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; data&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;playlist
+
+&lt;span class=&quot;c1&quot;&gt;# Calculate AMI between features and class&lt;/span&gt;
+fami &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;features&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;getAMI&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;hr&gt;
+
+&lt;h2&gt;Dataset&lt;/h2&gt;
+
+&lt;p&gt;The SPUD dataset contains 10,000 playlists created by Last.fm users. Spotify URI and song metadata are included for every song. Full listening history is also included for a number of users. The dataset is in SQLite database format and is available under the MIT open source license:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.dcs.gla.ac.uk/%7Edaniel/spud/SPUD.sqlite&quot;&gt;Download dataset&lt;/a&gt;  &lt;/p&gt;
 </description>
-        <pubDate>Mon, 03 Mar 2014 00:00:00 +0000</pubDate>
-        <link>http://www.dannyboland.com/Hello-World/</link>
-        <guid isPermaLink="true">http://www.dannyboland.com/Hello-World/</guid>
+        <pubDate>Mon, 27 Oct 2014 00:00:00 +0000</pubDate>
+        <link>http://www.dannyboland.com/ISMIR/</link>
+        <guid isPermaLink="true">http://www.dannyboland.com/ISMIR/</guid>
       </item>
     
   </channel>

@@ -29,7 +29,7 @@ body {
 
 .container {
   margin: 0 auto;
-  max-width: 1050px;
+  max-width: 1020px;
   padding: 0 10px;
   width: 100%;
 }

@@ -73,7 +73,7 @@ historyPlot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;spa
 &lt;p&gt;This example shows how to identify music features relevant to how users made the 10,000 playlists in the dataset. We retrieved music features for each song and calculate the Mutual-Information of music features with playlist membership.&lt;/p&gt;
 
 &lt;p&gt;&lt;br&gt;
-&lt;div align=&quot;center&quot;&gt;&lt;img src=&#39;http://dannyboland.com/spud/featuresPlot.png&#39; width=&quot;70%&quot;&gt;&lt;/div&gt;&lt;/p&gt;
+&lt;div align=&quot;center&quot;&gt;&lt;img src=&#39;/images/featuresPlot.png&#39; width=&quot;70%&quot;&gt;&lt;/div&gt;&lt;/p&gt;
 
 &lt;h3&gt;Example code&lt;/h3&gt;
 

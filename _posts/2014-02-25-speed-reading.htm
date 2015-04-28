@@ -1,0 +1,55 @@
+---
+layout: post
+title: Speed Reading
+---
+<p>The <a href="http://www.spritzinc.com/">Spritz</a> speed-reading interface caught a lot of attention recently. It enables fast rates of reading comprehension using a very limited display size (a single word at a time). Their demo is impressive but I wanted to try it out with my own text. I hacked up a demo using their approach that you can paste any text into...</p>
+
+<hr>
+
+<h2>Demo</h2>
+
+    <div id="page" align="center">
+    <div align="center" style="width:200px">
+    <textarea id ="splashbox" rows="2", cols="22" style="resize:none; width:100%">&#13;           &uarr;</textarea>
+    <select id="speed" style="width: 50%">
+        <option value="500">500wpm</option>
+        <option value="400">400wpm</option>
+        <option value="300" selected="selected">300wpm</option>
+        <option value="200">200wpm</option>
+    </select><br /><br />
+    
+    Paste text below and click Go!
+    <textarea id="textinput" rows="20", cols="22" style="resize:none; width:100%"></textarea>
+    <br />
+    <button id="play">Go!</button>
+    </div>
+    </div>
+    <script>        
+        // Play Function
+        function playSplash() {
+            text_elem = document.getElementById('textinput');
+            splash_elem = document.getElementById('splashbox');
+            text = text_elem.value;
+            speed = parseInt(document.getElementById('speed').value);
+            padding = "                    ";
+            
+            words = text.split(/\s+|\-+/);
+            word_idx = 0;
+            intervalID = setInterval(function(){
+                if (word_idx >= words.length) clearInterval(intervalID);
+                else {
+                    word = words[word_idx++];
+                    l = word.length;
+                    pad_length = 10;
+                    if (l > 13) pad_length = 7;
+                    else if (l > 9) pad_length = 8;
+                    else if (l > 5) pad_length = 9;
+                    else if (l == 1) pad_length = 11;
+                    splash_elem.value = padding.slice(0,pad_length) + word + '\n' + padding.slice(0,11) + '\u2191';
+                }
+            }, 60000.0 / speed);
+        }
+        
+        // Trigger Event for the Play Button
+        document.getElementById('play').addEventListener('click', playSplash);
+    </script>

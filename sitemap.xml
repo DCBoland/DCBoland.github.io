@@ -16,26 +16,31 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>http://www.dannyboland.com/speed-reading/</loc>
+    <lastmod>2014-02-25T00:00:00+00:00</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>http://www.dannyboland.com/404.html</loc>
-    <lastmod>2015-04-28T15:25:36+01:00</lastmod>
+    <lastmod>2015-04-29T12:40:50+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://www.dannyboland.com/about/</loc>
-    <lastmod>2015-04-28T15:25:36+01:00</lastmod>
+    <lastmod>2015-04-29T12:40:50+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://www.dannyboland.com/</loc>
-    <lastmod>2015-04-28T15:25:36+01:00</lastmod>
+    <lastmod>2015-04-29T12:40:50+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://www.dannyboland.com/publications/</loc>
-    <lastmod>2015-04-28T15:25:36+01:00</lastmod>
+    <lastmod>2015-04-29T12:40:50+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

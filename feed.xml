@@ -119,6 +119,65 @@ fami &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot
     
       <item>
         <title>Speed Reading</title>
+        <description>&lt;p&gt;The &lt;a href=&quot;http://www.spritzinc.com/&quot;&gt;Spritz&lt;/a&gt; speed-reading interface caught a lot of attention recently. It enables fast rates of reading comprehension using a very limited display size (a single word at a time). Their demo is impressive but I wanted to try it out with my own text. I hacked up a demo using their approach that you can paste any text into...&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;h2&gt;Demo&lt;/h2&gt;
+
+    &lt;div id=&quot;page&quot; align=&quot;center&quot;&gt;
+    &lt;div align=&quot;center&quot; style=&quot;width:200px&quot;&gt;
+    &lt;textarea id =&quot;splashbox&quot; rows=&quot;2&quot;, cols=&quot;22&quot; style=&quot;resize:none; width:100%&quot;&gt;&amp;#13;           &amp;uarr;&lt;/textarea&gt;
+    &lt;select id=&quot;speed&quot; style=&quot;width: 50%&quot;&gt;
+        &lt;option value=&quot;500&quot;&gt;500wpm&lt;/option&gt;
+        &lt;option value=&quot;400&quot;&gt;400wpm&lt;/option&gt;
+        &lt;option value=&quot;300&quot; selected=&quot;selected&quot;&gt;300wpm&lt;/option&gt;
+        &lt;option value=&quot;200&quot;&gt;200wpm&lt;/option&gt;
+    &lt;/select&gt;&lt;br /&gt;&lt;br /&gt;
+    
+    Paste text below and click Go!
+    &lt;textarea id=&quot;textinput&quot; rows=&quot;20&quot;, cols=&quot;22&quot; style=&quot;resize:none; width:100%&quot;&gt;&lt;/textarea&gt;
+    &lt;br /&gt;
+    &lt;button id=&quot;play&quot;&gt;Go!&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script&gt;        
+        // Play Function
+        function playSplash() {
+            text_elem = document.getElementById('textinput');
+            splash_elem = document.getElementById('splashbox');
+            text = text_elem.value;
+            speed = parseInt(document.getElementById('speed').value);
+            padding = &quot;                    &quot;;
+            
+            words = text.split(/\s+|\-+/);
+            word_idx = 0;
+            intervalID = setInterval(function(){
+                if (word_idx &gt;= words.length) clearInterval(intervalID);
+                else {
+                    word = words[word_idx++];
+                    l = word.length;
+                    pad_length = 10;
+                    if (l &gt; 13) pad_length = 7;
+                    else if (l &gt; 9) pad_length = 8;
+                    else if (l &gt; 5) pad_length = 9;
+                    else if (l == 1) pad_length = 11;
+                    splash_elem.value = padding.slice(0,pad_length) + word + '\n' + padding.slice(0,11) + '\u2191';
+                }
+            }, 60000.0 / speed);
+        }
+        
+        // Trigger Event for the Play Button
+        document.getElementById('play').addEventListener('click', playSplash);
+    &lt;/script&gt;
+</description>
+        <pubDate>Tue, 25 Feb 2014 00:00:00 +0000</pubDate>
+        <link>http://www.dannyboland.com/speed-reading/</link>
+        <guid isPermaLink="true">http://www.dannyboland.com/speed-reading/</guid>
+      </item>
+    
+      <item>
+        <title>Speed Reading</title>
         <description>&lt;p&gt;The &lt;a href=&quot;http://www.spritzinc.com/&quot;&gt;Spritz&lt;/a&gt; speed-reading interface caught a lot of attention recently&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;http://www.gla.ac.uk/schools/computing/researchstudents/markmcgill/&quot;&gt;Mark McGill&lt;/a&gt; and I wanted to solve some of the common issues people had with Virtual Reality headsets. We ran a survey, which showed that one of the key issues to address was enabling people to see their keyboard and other people in the room. We stripped down a webcam, mounted it on an Oculus Rift, and tried out a variety of ways of blending the real and virtual worlds. We found blending based on user engagement, such as when users reach for the keyboard, to work best - people actually managed to type fairly well!

@@ -176,21 +176,5 @@ fami &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot
         <guid isPermaLink="true">http://www.dannyboland.com/speed-reading/</guid>
       </item>
     
-      <item>
-        <title>Speed Reading</title>
-        <description>&lt;p&gt;The &lt;a href=&quot;http://www.spritzinc.com/&quot;&gt;Spritz&lt;/a&gt; speed-reading interface caught a lot of attention recently&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://www.gla.ac.uk/schools/computing/researchstudents/markmcgill/&quot;&gt;Mark McGill&lt;/a&gt; and I wanted to solve some of the common issues people had with Virtual Reality headsets. We ran a survey, which showed that one of the key issues to address was enabling people to see their keyboard and other people in the room. We stripped down a webcam, mounted it on an Oculus Rift, and tried out a variety of ways of blending the real and virtual worlds. We found blending based on user engagement, such as when users reach for the keyboard, to work best - people actually managed to type fairly well!
-&lt;div class=&quot;embed video YouTube&quot;&gt;&lt;iframe width=&quot;480&quot; height=&quot;270&quot; src=&quot;https://www.youtube.com/embed/SHdfxuh7_GY?feature=oembed&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;/p&gt;
-
-&lt;hr&gt;
-
-&lt;h2&gt;Typing Study&lt;/h2&gt;
-</description>
-        <pubDate>Tue, 25 Feb 2014 00:00:00 +0000</pubDate>
-        <link>http://www.dannyboland.com/speed-reading/</link>
-        <guid isPermaLink="true">http://www.dannyboland.com/speed-reading/</guid>
-      </item>
-    
   </channel>
 </rss>

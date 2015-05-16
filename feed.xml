@@ -73,7 +73,7 @@ historyPlot &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; ggplot&lt;spa
 &lt;p&gt;This example shows how to identify music features relevant to how users made the 10,000 playlists in the dataset. We retrieved music features for each song and calculate the Mutual-Information of music features with playlist membership.&lt;/p&gt;
 
 &lt;p&gt;&lt;br&gt;
-&lt;div align=&quot;center&quot;&gt;&lt;img src=&#39;/images/featuresPlot.png&#39; width=&quot;70%&quot;&gt;&lt;/div&gt;&lt;/p&gt;
+&lt;div align=&quot;center&quot;&gt;&lt;img src='/images/featuresPlot.png' width=&quot;70%&quot;&gt;&lt;/div&gt;&lt;/p&gt;
 
 &lt;h3&gt;Example code&lt;/h3&gt;
 
@@ -144,10 +144,10 @@ fami &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot
     &lt;script&gt;        
         // Play Function
         function playSplash() {
-            text_elem = document.getElementById(&#39;textinput&#39;);
-            splash_elem = document.getElementById(&#39;splashbox&#39;);
+            text_elem = document.getElementById('textinput');
+            splash_elem = document.getElementById('splashbox');
             text = text_elem.value;
-            speed = parseInt(document.getElementById(&#39;speed&#39;).value);
+            speed = parseInt(document.getElementById('speed').value);
             padding = &quot;                    &quot;;
             
             words = text.split(/\s+|\-+/);
@@ -162,13 +162,13 @@ fami &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot
                     else if (l &gt; 9) pad_length = 8;
                     else if (l &gt; 5) pad_length = 9;
                     else if (l == 1) pad_length = 11;
-                    splash_elem.value = padding.slice(0,pad_length) + word + &#39;\n&#39; + padding.slice(0,11) + &#39;\u2191&#39;;
+                    splash_elem.value = padding.slice(0,pad_length) + word + '\n' + padding.slice(0,11) + '\u2191';
                 }
             }, 60000.0 / speed);
         }
         
         // Trigger Event for the Play Button
-        document.getElementById(&#39;play&#39;).addEventListener(&#39;click&#39;, playSplash);
+        document.getElementById('play').addEventListener('click', playSplash);
     &lt;/script&gt;
 </description>
         <pubDate>Tue, 25 Feb 2014 00:00:00 +0000</pubDate>

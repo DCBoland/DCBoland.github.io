@@ -75,7 +75,7 @@ body {
 
 .container {
   margin: 0 auto;
-  max-width: 1050px;
+  max-width: 800px;
   padding: 0 10px;
   width: 100%;
 }
@@ -181,6 +181,14 @@ img {
 ::selection {
   color: #000;
   background: #eee;
+}
+
+.YouTube {
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  width: 700px;
+  margin-top: 10px;
 }
 
 .clearfix:before,
@@ -311,6 +319,14 @@ nav a {
 .post .read-more {
   text-transform: uppercase;
   font-size: 15px;
+}
+
+.YouTube iframe {
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  width: 700px;
+  height: 394px;
 }
 
 .wrapper-footer {

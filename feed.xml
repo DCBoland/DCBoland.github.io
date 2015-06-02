@@ -7,6 +7,19 @@
     <atom:link href="http://www.dannyboland.com/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Engaging with Mobile Music Retrieal</title>
+        <description>&lt;p&gt;(More details to follow)&lt;/p&gt;
+
+&lt;div class=&quot;embed video YouTube&quot;&gt;&lt;iframe width=&quot;480&quot; height=&quot;270&quot; src=&quot;https://www.youtube.com/embed/g_QAnsqWgZ0?feature=oembed&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/div&gt;
+
+&lt;hr&gt;
+</description>
+        <pubDate>Tue, 02 Jun 2015 00:00:00 +0100</pubDate>
+        <link>http://www.dannyboland.com/mobileHCI15/</link>
+        <guid isPermaLink="true">http://www.dannyboland.com/mobileHCI15/</guid>
+      </item>
+    
+      <item>
         <title>Engaging with Virtual Reality</title>
         <description>&lt;p&gt;&lt;a href=&quot;http://www.gla.ac.uk/schools/computing/researchstudents/markmcgill/&quot;&gt;Mark McGill&lt;/a&gt; and I wanted to solve some of the common issues people had with Virtual Reality headsets. We ran a survey, which showed that one of the key issues to address was enabling people to see their keyboard and other people in the room. We stripped down a webcam, mounted it on an Oculus Rift, and tried out a variety of ways of blending the real and virtual worlds. We found blending based on user engagement, such as when users reach for the keyboard, to work best - people actually managed to type fairly well! &lt;a href=&quot;papers/McGBolMur15.pdf&quot;&gt;Read the paper&lt;/a&gt;.
 &lt;div class=&quot;embed video YouTube&quot;&gt;&lt;iframe width=&quot;480&quot; height=&quot;270&quot; src=&quot;https://www.youtube.com/embed/SHdfxuh7_GY?feature=oembed&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;/p&gt;

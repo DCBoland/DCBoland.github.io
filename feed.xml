@@ -8,10 +8,21 @@
     
       <item>
         <title>Engaging with Mobile Music Retrieval</title>
-        <description>&lt;p&gt;(More details to follow)
+        <description>&lt;p&gt;This work deals with measuring how engaged a user is in their music retrieval, and how to adapt a retrieval interface to this engagement. It will be presented at mobileHCI in Copenhagen and received a best paper honourable mention. The resulting prototype music system allowed users to navigate music by mood, at a range of engagement levels, and inspired the Bang &amp;amp; Olufsen &lt;a href=&quot;http://www.bang-olufsen.com/en/sound/sound-systems/beosound-moment&quot;&gt;BeoSound Moment&amp;#39;s MoodWheel&lt;/a&gt; interface.
 &lt;div class=&quot;embed video YouTube&quot;&gt;&lt;iframe width=&quot;480&quot; height=&quot;270&quot; src=&quot;https://www.youtube.com/embed/g_QAnsqWgZ0?feature=oembed&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;/p&gt;
 
 &lt;hr&gt;
+
+&lt;p&gt;I recruited 95 listeners to provide their last.fm listening histories for analysis and to answer an established music engagement questionnaire &lt;a href=&quot;#Gre08&quot;&gt;(Greasley, 2008)&lt;/a&gt;. This allowed the correlations between music listening behaviour and self-reported music engagement to be explored, resulting in the definition of a set of engagement-stratified listener profiles.&lt;/p&gt;
+
+&lt;p&gt;The prototype system shown in the video allows a user to quickly move between levels of engagement, from casual mood selection through to more specific and controlling selection styles. The user can denote their engagement with a pressure sensor &lt;a href=&quot;#MclBolBre14&quot;&gt;(McLachlan, Boland, &amp;amp; Brewster, 2014)&lt;/a&gt;, using the metaphor of physically engaging with the system.&lt;/p&gt;
+
+&lt;p&gt;Paper available from 28th August 2015.&lt;/p&gt;
+
+&lt;ol class=&quot;bibliography&quot;&gt;&lt;li&gt;&lt;span id=&quot;MclBolBre14&quot;&gt;McLachlan, R., Boland, D., &amp;amp; Brewster, S. (2014). Transient and Transitional States: Pressure as an Auxiliary Input Modality for Bimanual Interaction. In &lt;i&gt;Proceedings of the SIGCHI Conference on Human Factors in Computing Systems&lt;/i&gt; (pp. 401–410).&lt;/span&gt; 
+&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;Gre08&quot;&gt;Greasley, A. E. (2008). &lt;i&gt;Engagement with music in everyday life: and in-depth study of adults’ musical preferences and listening behaviours&lt;/i&gt; (PhD thesis). University of Keele.&lt;/span&gt; 
+&lt;/li&gt;&lt;/ol&gt;
 </description>
         <pubDate>Tue, 02 Jun 2015 00:00:00 +0100</pubDate>
         <link>http://www.dannyboland.com/mobileHCI15/</link>

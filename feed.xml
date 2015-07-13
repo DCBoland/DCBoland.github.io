@@ -42,7 +42,7 @@
 
 &lt;p&gt;This example shows a user&amp;#39;s listening behaviour over several years. The entropy over features is computed for a moving window of track plays, indicating how diverse the listening was over each feature. Taking artist IDs as example, throughout 2007-2010, the entropy is often low, with some sessions of just one artist. In February 2010, the user began using online radio, listening to tracks irrespective of artist, causing a distinct change in entropy. Note that they still sometimes continued their old style of music retrieval as well.&lt;/p&gt;
 
-&lt;iframe width=&quot;100%&quot; height=&quot;510px&quot; frameborder=&quot;0&quot; src=&quot;https://dannyboland.shinyapps.io/listeningHistory/&quot;&gt;&lt;!-- //required for browser compatibility --&gt;&lt;/iframe&gt;
+&lt;iframe width=&quot;100%&quot; height=&quot;510px&quot; frameborder=&quot;0&quot; src=&quot;https://dannyboland.shinyapps.io/listeningHistory/&quot; scrolling=&quot;no&quot; style=&quot;overflow: hidden;&quot;&gt;&lt;!-- //required for browser compatibility --&gt;&lt;/iframe&gt;
 
 &lt;h3&gt;Example code&lt;/h3&gt;
 
